@@ -1,4 +1,7 @@
 /executor.py
 /sandbox.py
 /venv/
-/datasets/LEGOv2/
+/datasets/__pycache__
+/datasets/LEGO.uni-ulm.de
+/datasets/MELD.eecs.umich.edu
+/__pycache__/
