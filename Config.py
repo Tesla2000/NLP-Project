@@ -6,6 +6,11 @@ import torch
 
 
 class Config:
+    consecutive_lacks_of_improvement_allowed = 3
+    val_path = None
+    eps = 1e-8
+    learning_rate = 2e-5
+    n_epochs = 4
     max_length = 64
     datasets = {
         "LEGO": "http://www.uni-ulm.de/fileadmin/website_uni_ulm/iui.inst.125/research/DS/LEGO/LEGOv2.zip",
