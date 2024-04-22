@@ -1,5 +1,4 @@
 import shutil
-from itertools import islice
 from pathlib import Path
 
 import cv2
@@ -20,21 +19,18 @@ def _divide_video_to_frames(
         try:
             return np.array(
                 tuple(
-                    islice(
+                    map(
+                        cv2.imread,
                         map(
-                            cv2.imread,
-                            map(
-                                str,
-                                sorted(
-                                    out_path.iterdir(),
-                                    key=lambda path: int(
-                                        path.name.split(".")[0].strip("_")
-                                    ),
+                            str,
+                            sorted(
+                                out_path.iterdir(),
+                                key=lambda path: int(
+                                    path.name.split(".")[0].strip("_")
                                 ),
                             ),
                         ),
-                        2,
-                    )
+                    ),
                 )
             )
         finally:

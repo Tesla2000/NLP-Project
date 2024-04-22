@@ -6,6 +6,8 @@ import torch
 
 
 class Config:
+    batch_size = 2
+    n_classes = 3
     consecutive_lacks_of_improvement_allowed = 3
     val_path = None
     eps = 1e-8
@@ -21,6 +23,7 @@ class Config:
     temp_output_video_folder = root / "_temp_output_video_folder"
     datasets_path = root / "datasets"
     train_video_path = datasets_path / "video_path"
+    val_video_path = datasets
     train_path = datasets_path / "train.csv"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
