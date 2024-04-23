@@ -26,8 +26,8 @@ def train_video():
     optimizer = Adam(model.parameters())
     train_dataset = VideoDataset(Config.train_video_path, Config.train_path)
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size)
-    val_dataset = VideoDataset(Config.val_video_path, Config.val_path)
-    val_dataloader = DataLoader(val_dataset, batch_size=batch_size)
+    # val_dataset = VideoDataset(Config.val_video_path, Config.val_path)
+    # val_dataloader = DataLoader(val_dataset, batch_size=batch_size)
     total = ceil(len(train_dataset) / batch_size)
     best_accuracy = 0
     best_loss = float("inf")

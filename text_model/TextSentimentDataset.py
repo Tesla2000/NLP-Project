@@ -14,9 +14,6 @@ class TextSentimentDataset(LabelsDataset):
         super().__init__(data_file_path)
         self.tokenizer = tokenizer
 
-    def __len__(self):
-        return len(self.sentences)
-
     def __getitem__(self, index: int):
         sentence, sentiment = self.sentences[index]
         label = self.sentiment_to_label[sentiment]
