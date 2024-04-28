@@ -12,10 +12,10 @@ from tqdm import tqdm
 from transformers import BertTokenizer, BertForSequenceClassification
 
 from Config import Config
-from text_model.TextSentimentDataset import TextSentimentDataset
+from .TextSentimentDataset import TextSentimentDataset
 
 
-def retrainBert():
+def retrainBERT():
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
     train_dataset = TextSentimentDataset(tokenizer, Config.train_path)
     batch_size = Config.text_batch_size
@@ -87,4 +87,4 @@ def retrainBert():
 
 
 if __name__ == "__main__":
-    retrainBert()
+    retrainBERT()
