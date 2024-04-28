@@ -16,17 +16,14 @@ class VideoToFrames:
     """A class for breaking a video to it's frames."""
 
     def __init__(
-        self, path: str = None, verbose: bool = True, image_format: str = "jpg"
+        self, path: str = None, verbose: bool = False, image_format: str = "jpg"
     ) -> None:
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(level=logging.DEBUG)
         formatter = logging.Formatter(
             "%(name)s - %(levelname)s - %(asctime)s - %(message)s"
         )
         handler_s = logging.StreamHandler(stream=sys.stdout)
         handler_s.setLevel(level=logging.DEBUG)
         handler_s.setFormatter(formatter)
-        self.logger.addHandler(handler_s)
 
         self.verbose = verbose
 
@@ -39,29 +36,23 @@ class VideoToFrames:
             self.base_dir = path
             if os.path.isdir(self.base_dir):
                 self.video_names = []
-                self.logger.debug("All videos:")
                 for index, p in enumerate(os.listdir(self.base_dir)):
                     if os.path.isfile(
                         os.path.join(self.base_dir, p)
                     ) and self._check_format(p):
                         self.video_names.append(os.path.join(self.base_dir, p))
-                        self.logger.debug(f"{index}-  {p}")
             elif os.path.isfile(self.base_dir):
                 self.video_names = [self.base_dir]
-                self.logger.debug(f"Video: {os.path.basename(self.base_dir)}")
             else:
-                self.logger.warning(f"'{self.base_dir}' is a wrong path!")
                 exit()
         else:
             self.base_dir = os.getcwd()
             self.video_names = []
-            self.logger.debug("All videos:")
             for index, p in enumerate(os.listdir(self.base_dir)):
                 if os.path.isfile(
                     os.path.join(self.base_dir, p)
                 ) and self._check_format(p):
                     self.video_names.append(os.path.join(self.base_dir, p))
-                    self.logger.debug(f"{index}-  {p}")
 
     def _check_format(self, file_name: str) -> bool:
         file_name = file_name.lower()
@@ -79,7 +70,6 @@ class VideoToFrames:
             return False
 
     def run_breaking(self, output_folder: Optional[Union[Path, str]] = None) -> None:
-        self.logger.debug("Processing:")
         err = False
         for video_name in self.video_names:
             if output_folder is None:
@@ -87,9 +77,6 @@ class VideoToFrames:
 
             if self._make_folder(path=output_folder):
                 tic = time.process_time()
-                self.logger.debug(
-                    f"Breaking {os.path.basename(video_name)} to frames..."
-                )
                 cap = cv2.VideoCapture(video_name)
                 if not cap.isOpened():
                     continue
@@ -113,10 +100,6 @@ class VideoToFrames:
                             )
                             counter += 1
                     except Exception as e:
-                        self.logger.error(
-                            f"Can not save frames with format {self.image_format}.",
-                            exc_info=False,
-                        )
                         err = True
                         break
                 if self.verbose:
@@ -128,8 +111,6 @@ class VideoToFrames:
                 cap.release()
                 if err:
                     break
-            else:
-                self.logger.debug(f"There is a folder for {video_name} already.")
 
 
 def _divide_video_to_frames(
@@ -137,28 +118,25 @@ def _divide_video_to_frames(
     out_path: Path = Config.temp_output_video_folder,
     load_to_mem: bool = True,
 ) -> np.ndarray:
+    if out_path.exists():
+        shutil.rmtree(out_path)
     obj = VideoToFrames(path=str(video_path))
     obj.run_breaking(out_path)
     if load_to_mem:
-        try:
-            return np.array(
-                tuple(
+        return np.array(
+            tuple(
+                map(
+                    cv2.imread,
                     map(
-                        cv2.imread,
-                        map(
-                            str,
-                            sorted(
-                                out_path.iterdir(),
-                                key=lambda path: int(
-                                    path.name.split(".")[0].strip("_")
-                                ),
-                            ),
+                        str,
+                        sorted(
+                            out_path.iterdir(),
+                            key=lambda path: int(path.name.split(".")[0].strip("_")),
                         ),
                     ),
-                )
+                ),
             )
-        finally:
-            shutil.rmtree(out_path)
+        )
     raise ValueError("Not implemented yet")
 
 
