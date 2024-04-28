@@ -13,16 +13,18 @@ class VideoDataset(LabelsDataset):
         super().__init__(data_file_path)
         self.video_paths = video_paths
 
-    def __len__(self):
-        return len(tuple(self.video_paths.iterdir()))
-
     def __getitem__(self, index: int):
         sentence, sentiment = self.sentences[index]
         label = self.sentiment_to_label[sentiment]
         divided_video = _divide_video_to_frames(
-            tuple(self.video_paths.iterdir())[index]
+            self.video_paths.joinpath(self.files[index])
         )
-        divided_video = divided_video.transpose((0, 3, 1, 2))
+        try:
+            divided_video = divided_video.transpose((0, 3, 1, 2))
+        except:
+            return self.__getitem__(
+                index - 1
+            )  # That is not how it is supposed to be done
         return (
             torch.tensor(divided_video).to(Config.device).float(),
             torch.tensor(np.eye(len(self.sentiment_to_label))[label])

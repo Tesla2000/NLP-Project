@@ -14,6 +14,12 @@ class LabelsDataset(Dataset):
             for sentiment in sentiment_groups.indices
             for sentence in sentiment_groups.get_group(sentiment).values[:, 1]
         )
+        self.files = tuple(
+            map("dia{}_utt{}.mp4".format, df.Dialogue_ID, df.Utterance_ID)
+        )
         self.sentiment_to_label = dict(
             map(reversed, enumerate(sentiment_groups.indices))
         )
+
+    def __len__(self):
+        return len(self.sentences)

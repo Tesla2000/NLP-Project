@@ -1,7 +1,6 @@
 from copy import deepcopy
 from itertools import count
 from math import ceil
-from pathlib import Path
 
 import numpy as np
 import torch
@@ -18,7 +17,7 @@ from video_model.VideoModel import VideoModel
 
 
 def train_video():
-    batch_size = Config.batch_size
+    batch_size = Config.video_batch_size
     model = VideoModel(image_model=efficientnet_b0(), n_classes=Config.n_classes).to(
         Config.device
     )
@@ -75,9 +74,9 @@ def train_video():
             best_accuracy = accuracy
             best_model = deepcopy(model.state_dict())
             consecutive_lack_of_improvement = 0
-    out_folder = Path("models")
-    out_folder.mkdir(exist_ok=True)
-    torch.save(best_model, out_folder.joinpath(f"video_{best_accuracy}.pth"))
+    torch.save(
+        best_model, Config.video_batch_size.joinpath(f"video_{best_accuracy}.pth")
+    )
 
 
 if __name__ == "__main__":
