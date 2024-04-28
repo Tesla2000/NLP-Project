@@ -126,7 +126,6 @@ class VideoToFrames:
                         flush=False,
                     )
                 cap.release()
-                cv2.destroyAllWindows()
                 if err:
                     break
             else:

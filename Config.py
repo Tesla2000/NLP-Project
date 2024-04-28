@@ -6,6 +6,7 @@ import torch
 
 
 class Config:
+    val_video_length = 100
     video_batch_size = 1
     n_classes = 3
     gru_hidden_size = 1024

@@ -1,5 +1,5 @@
 from copy import deepcopy
-from itertools import count
+from itertools import count, islice
 from math import ceil
 
 import numpy as np
@@ -50,7 +50,7 @@ def train_video():
         new_loss = 0.0
         label_ids = []
         predictions = []
-        for frames, labels in val_dataloader:
+        for frames, labels in islice(val_dataloader, Config.val_video_length):
             label_ids += list(labels.to("cpu").numpy())
             with torch.no_grad():
                 optimizer.zero_grad()
