@@ -6,12 +6,12 @@ from transformers import PreTrainedTokenizerBase
 from transformers.utils import PaddingStrategy
 
 from Config import Config
-from LabelsDataset import LabelsDataset
+from combinations.LabelsDataset import LabelsDataset
 
 
 class TextSentimentDataset(LabelsDataset):
     def __init__(self, tokenizer: PreTrainedTokenizerBase, data_file_path: Path):
-        super().__init__(data_file_path)
+        LabelsDataset.__init__(self, data_file_path)
         self.tokenizer = tokenizer
 
     def __getitem__(self, index: int):
