@@ -23,15 +23,13 @@ class TextAndVideoDataset(TextSentimentDataset, VideoDataset):
 
     def __getitem__(self, index: int):
         sentence, sentiment = self.sentences[index]
-        # divided_video = _divide_video_to_frames(
-        #     self.video_paths.joinpath(self.files[index]),
-        # )
-        # try:
-        #     divided_video = divided_video.transpose((0, 3, 1, 2))
-        # except:
-        #     return self.__getitem__(
-        #         index - 1
-        #     )
+        divided_video = _divide_video_to_frames(
+            self.video_paths.joinpath(self.files[index]),
+        )
+        try:
+            divided_video = divided_video.transpose((0, 3, 1, 2))
+        except:
+            return self.__getitem__(index - 1)
         tokenized_sentence = self.tokenizer.encode_plus(
             sentence,
             max_length=Config.max_length,
@@ -44,7 +42,6 @@ class TextAndVideoDataset(TextSentimentDataset, VideoDataset):
         return (
             tokenized_sentence["input_ids"].squeeze(0),
             tokenized_sentence["attention_mask"].squeeze(0),
-            tokenized_sentence["attention_mask"].squeeze(0),
-            # Tensor(divided_video).to(Config.device),
+            Tensor(divided_video).to(Config.device),
             Tensor(np.eye(len(self.sentiment_to_label))[label]),
         )

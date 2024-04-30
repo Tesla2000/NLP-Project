@@ -62,18 +62,18 @@ def train_text_and_video():
             attention_mask = attention_mask.to(Config.device)
             labels = labels.to(Config.device)
             optimizer.zero_grad()
-            logits = model(frames, input_ids, attention_mask=attention_mask)[0]
+            logits = model(frames, input_ids, attention_mask=attention_mask)
             train_loss = loss_function(logits, labels)
             train_loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
         model.eval()
         with torch.no_grad():
-            input_ids, attention_mask, labels = next(iter(eval_loader))
+            input_ids, attention_mask, frames, labels = next(iter(eval_loader))
             input_ids = input_ids.to(Config.device)
             attention_mask = attention_mask.to(Config.device)
             labels = labels.to(Config.device)
-            logits = model(input_ids, attention_mask=attention_mask)[0]
+            logits = model(frames, input_ids, attention_mask=attention_mask)
             new_loss = loss_function(logits, labels).item()
             logits = logits.detach().cpu().numpy()
             label_ids = labels.to("cpu").numpy()
