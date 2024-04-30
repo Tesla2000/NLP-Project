@@ -4,7 +4,7 @@ import numpy as np
 import torch
 
 from Config import Config
-from LabelsDataset import LabelsDataset
+from combinations.LabelsDataset import LabelsDataset
 from video_model._divide_video_to_frames import _divide_video_to_frames
 
 
@@ -22,9 +22,7 @@ class VideoDataset(LabelsDataset):
         try:
             divided_video = divided_video.transpose((0, 3, 1, 2))
         except:
-            return self.__getitem__(
-                index - 1
-            )  # That is not how it is supposed to be done
+            return self.__getitem__(index - 1)
         return (
             torch.tensor(divided_video).to(Config.device).float(),
             torch.tensor(np.eye(len(self.sentiment_to_label))[label])
