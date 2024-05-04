@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import numpy as np
+
 from combinations.LabelsDataset import LabelsDataset
 from ._audio_preparation import (
     _extract_audio_from_video,
@@ -20,4 +22,4 @@ class AudioDataset(LabelsDataset):
         )
         extracted_features = _extract_audio_features(audio_array, sampling_rate)
 
-        return extracted_features, label
+        return np.array(tuple(extracted_features.values())), label
