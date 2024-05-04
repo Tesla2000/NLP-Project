@@ -19,8 +19,10 @@ class Config:
     datasets_path = Path("/kaggle/input/meld-dataset/MELD-RAW/MELD.Raw")
     train_video_path = datasets_path / "train/train_splits"
     val_video_path = datasets_path / "dev/dev_splits_complete"
+    test_video_path = datasets_path / "test/output_repeated_splits_test"
     train_path = datasets_path / "train/train_sent_emo.csv"
     val_path = datasets_path / "dev_sent_emo.csv"
+    test_path = datasets_path / "test_sent_emo.csv"
     root = Path(".")
     temp_output_video_folder = root / "_temp_output_video_folder"
     models_path = root / "models"

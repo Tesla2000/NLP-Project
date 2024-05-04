@@ -5,20 +5,18 @@ import numpy as np
 from moviepy.editor import VideoFileClip
 import opensmile
 
-def _extract_audio_from_video(
-        video_path: Path
-) -> Tuple[np.ndarray, int]:
+
+def _extract_audio_from_video(video_path: Path) -> Tuple[np.ndarray, int]:
     video_clip = VideoFileClip(str(video_path))
 
     if video_clip.audio is None:
         video_clip.close()
         raise ValueError("No audio track in video")
 
-    audio_clip = video_clip.audio
     fps = 44100
     try:
         audio_frames = []
-        for frame in video_clip.audio.iter_frames(fps=fps, dtype='float32'):
+        for frame in video_clip.audio.iter_frames(fps=fps, dtype="float32"):
             audio_frames.append(frame)
         audio_array = np.vstack(audio_frames)
     finally:
@@ -26,10 +24,8 @@ def _extract_audio_from_video(
 
     return audio_array, fps
 
-def _extract_audio_features(
-        audio: np.ndarray,
-        sampling_rate: int
-) -> Dict[str, float]:
+
+def _extract_audio_features(audio: np.ndarray, sampling_rate: int) -> Dict[str, float]:
     if audio.shape[1] > 1:
         audio = audio[:, 0]
 
@@ -39,7 +35,7 @@ def _extract_audio_features(
     smile = opensmile.Smile(
         feature_set=opensmile.FeatureSet.ComParE_2016,
         feature_level=feature_level,
-        channels=[0]
+        channels=[0],
     )
     features = smile.process_signal(audio, sampling_rate=sampling_rate)
     feature_names = smile.feature_names
