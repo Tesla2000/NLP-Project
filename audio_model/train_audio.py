@@ -1,13 +1,15 @@
-from pathlib import Path
-
 import xgboost as xgb
 from sklearn.metrics import accuracy_score
 from torch.utils.data import DataLoader
-from AudioDataset import AudioDataset
 
+from AudioDataset import AudioDataset
 from Config import Config
 
-def train_and_evaluate_xgboost(train_dataset, val_dataset, test_dataset, batch_size=32):
+
+def train_and_evaluate_xgboost(batch_size=32):
+    train_dataset = AudioDataset(Config.train_video_path, Config.train_path)
+    val_dataset = AudioDataset(Config.val_video_path, Config.val_path)
+    test_dataset = AudioDataset(Config.test_video_path, Config.test_path)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
@@ -19,11 +21,11 @@ def train_and_evaluate_xgboost(train_dataset, val_dataset, test_dataset, batch_s
 
     dtrain = xgb.DMatrix(train_features, label=train_labels)
     params = {
-        'objective': 'multi:softmax',
-        'num_class': 3,
-        'max_depth': 6,
-        'eta': 0.3,
-        'verbosity': 1
+        "objective": "multi:softmax",
+        "num_class": Config.n_classes,
+        "max_depth": 6,
+        "eta": 0.3,
+        "verbosity": 1,
     }
     num_boost_round = 100
 
@@ -49,9 +51,6 @@ def train_and_evaluate_xgboost(train_dataset, val_dataset, test_dataset, batch_s
 
     return bst
 
-if __name__ == "__main__":
-    train_dataset = AudioDataset(Config.train_video_path, Config.train_path)
-    val_dataset = AudioDataset(Config.val_video_path, Config.val_path)
-    test_dataset = AudioDataset(Config.test_video_path, Config.test_path)
 
-    bst_model = train_and_evaluate_xgboost(train_dataset, val_dataset, test_dataset)
+if __name__ == "__main__":
+    bst_model = train_and_evaluate_xgboost()
