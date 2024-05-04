@@ -7,7 +7,7 @@ from Config import Config
 
 class TextAndAudioModel(nn.Module):
     n_text_features = 768
-    n_audio_features = 75
+    n_audio_features = 65
 
     def __init__(
         self,
@@ -33,9 +33,9 @@ class TextAndAudioModel(nn.Module):
         ).pooler_output
         outputs = []
         for audio_features, text_features in zip(audios_features, texts_features):
-            print(audios_features.shape, text_features.shape)
+            print(audio_features.shape, text_features.shape)
             sample = torch.concatenate(
-                (audio_features, text_features.unsqueeze(0)), dim=1
+                (audio_features.unsqueeze(0), text_features.unsqueeze(0)), dim=1
             )
             sample = self.hidden(sample)
             sample = self.fc(sample)
