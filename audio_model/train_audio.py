@@ -9,9 +9,7 @@ from Config import Config
 
 
 def train_and_evaluate_xgboost():
-    train_dataset = AudioDataset(
-        Path("datasets/video_path"), Path("datasets/train.csv")
-    )
+    train_dataset = AudioDataset(Config.train_video_path, Config.train_path)
     val_dataset = AudioDataset(Config.val_video_path, Config.val_path)
     test_dataset = AudioDataset(Config.test_video_path, Config.test_path)
     train_loader = DataLoader(
