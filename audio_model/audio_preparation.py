@@ -6,7 +6,7 @@ from moviepy.editor import VideoFileClip
 import opensmile
 
 
-def _extract_audio_from_video(video_path: Path) -> Tuple[np.ndarray, int]:
+def extract_audio_from_video(video_path: Path) -> Tuple[np.ndarray, int]:
     video_clip = VideoFileClip(str(video_path))
 
     if video_clip.audio is None:
@@ -25,7 +25,7 @@ def _extract_audio_from_video(video_path: Path) -> Tuple[np.ndarray, int]:
     return audio_array, fps
 
 
-def _extract_audio_features(audio: np.ndarray, sampling_rate: int) -> Dict[str, float]:
+def extract_audio_features(audio: np.ndarray, sampling_rate: int) -> Dict[str, float]:
     if audio.shape[1] > 1:
         audio = audio[:, 0]
 
