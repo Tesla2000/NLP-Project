@@ -66,7 +66,7 @@ class VideoToFrames:
         try:
             Path(path).mkdir(parents=True)
             return True
-        except:
+        except OSError:
             return False
 
     def run_breaking(self, output_folder: Optional[Union[Path, str]] = None) -> None:
@@ -113,7 +113,7 @@ class VideoToFrames:
                     break
 
 
-def _divide_video_to_frames(
+def divide_video_to_frames(
     video_path: Path,
     out_path: Path = Config.temp_output_video_folder,
     load_to_mem: bool = True,
@@ -141,4 +141,4 @@ def _divide_video_to_frames(
 
 
 if __name__ == "__main__":
-    _divide_video_to_frames(Config.datasets_path.joinpath("2024-03-21 16-50-53.mkv"))
+    divide_video_to_frames(Config.datasets_path.joinpath("2024-03-21 16-50-53.mkv"))

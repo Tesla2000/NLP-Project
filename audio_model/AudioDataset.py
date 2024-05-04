@@ -3,9 +3,9 @@ from pathlib import Path
 import numpy as np
 
 from combinations.LabelsDataset import LabelsDataset
-from ._audio_preparation import (
-    _extract_audio_from_video,
-    _extract_audio_features,
+from .audio_preparation import (
+    extract_audio_from_video,
+    extract_audio_features,
 )
 
 
@@ -17,9 +17,12 @@ class AudioDataset(LabelsDataset):
     def __getitem__(self, index: int):
         _, sentiment = self.sentences[index]
         label = self.sentiment_to_label[sentiment]
-        audio_array, sampling_rate = _extract_audio_from_video(
-            self.video_paths.joinpath(self.files[index])
-        )
-        extracted_features = _extract_audio_features(audio_array, sampling_rate)
+        try:
+            audio_array, sampling_rate = extract_audio_from_video(
+                self.video_paths.joinpath(self.files[index])
+            )
+            extracted_features = extract_audio_features(audio_array, sampling_rate)
+        except OSError:
+            return self.__getitem__(index - 1)
 
         return np.array(tuple(extracted_features.values())), label

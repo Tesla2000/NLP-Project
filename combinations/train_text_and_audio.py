@@ -2,30 +2,27 @@ from copy import deepcopy
 from itertools import count
 from math import ceil
 
-import numpy as np
 import torch
-from sklearn.metrics import accuracy_score
 from torch import nn
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
-from torchvision.models import efficientnet_b0
 from tqdm import tqdm
 from transformers import BertTokenizer, BertForSequenceClassification
 
 from Config import Config
-from combinations.TextAndVideoDataset import TextAndVideoDataset
-from combinations.TextAndVideoModel import TextAndVideoModel
+from combinations.TextAndAudioDataset import TextAndAudioDataset
+from combinations.TextAndAudioModel import TextAndAudioModel
 from combinations._eval_model import _eval_model
 
 
-def train_text_and_video():
+def train_text_and_audio():
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
-    train_dataset = TextAndVideoDataset(
+    train_dataset = TextAndAudioDataset(
         tokenizer, Config.train_path, Config.train_video_path
     )
-    batch_size = min(Config.text_batch_size, Config.video_batch_size)
+    batch_size = min(Config.text_batch_size, Config.audio_batch_size)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    eval_dataset = TextAndVideoDataset(
+    eval_dataset = TextAndAudioDataset(
         tokenizer, Config.val_path, Config.val_video_path
     )
     eval_loader = DataLoader(eval_dataset, batch_size=batch_size)
@@ -35,9 +32,7 @@ def train_text_and_video():
         output_attentions=False,
         output_hidden_states=False,
     )
-    model = TextAndVideoModel(
-        image_model=efficientnet_b0(), text_model=bert_model, n_classes=Config.n_classes
-    )
+    model = TextAndAudioModel(text_model=bert_model, n_classes=Config.n_classes)
     model.to(Config.device)
     optimizer = AdamW(
         model.parameters(),
@@ -52,7 +47,7 @@ def train_text_and_video():
     consecutive_lack_of_improvement = 0
     for epoch in count():
         model.train()
-        for input_ids, attention_mask, frames, labels in tqdm(
+        for input_ids, attention_mask, audio_features, labels in tqdm(
             train_loader,
             total=total,
             desc=f"Previous {accuracy=:.4f}, {new_loss=:.4f}. Training epoch {epoch}..."
@@ -63,12 +58,11 @@ def train_text_and_video():
             attention_mask = attention_mask.to(Config.device)
             labels = labels.to(Config.device)
             optimizer.zero_grad()
-            logits = model(frames, input_ids, attention_mask=attention_mask)
+            logits = model(audio_features, input_ids, attention_mask=attention_mask)
             train_loss = loss_function(logits, labels)
             train_loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
-        model.eval()
         new_loss, accuracy = _eval_model(eval_loader, model, loss_function, total)
         if best_loss <= new_loss:
             consecutive_lack_of_improvement += 1
@@ -86,4 +80,4 @@ def train_text_and_video():
 
 
 if __name__ == "__main__":
-    train_text_and_video()
+    train_text_and_audio()

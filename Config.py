@@ -6,8 +6,8 @@ import torch
 
 
 class Config:
+    combined_hidden_size = 128
     val_video_length = 100
-    video_batch_size = 1
     n_classes = 3
     gru_hidden_size = 1024
     eps = 1e-8
@@ -16,6 +16,8 @@ class Config:
 
     max_length = 64
     text_batch_size = 16
+    video_batch_size = 1
+    audio_batch_size = 16
     datasets_path = Path("/kaggle/input/meld-dataset/MELD-RAW/MELD.Raw")
     train_video_path = datasets_path / "train/train_splits"
     val_video_path = datasets_path / "dev/dev_splits_complete"

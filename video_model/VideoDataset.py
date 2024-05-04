@@ -5,7 +5,7 @@ import torch
 
 from Config import Config
 from combinations.LabelsDataset import LabelsDataset
-from video_model._divide_video_to_frames import _divide_video_to_frames
+from video_model.divide_video_to_frames import divide_video_to_frames
 
 
 class VideoDataset(LabelsDataset):
@@ -16,12 +16,12 @@ class VideoDataset(LabelsDataset):
     def __getitem__(self, index: int):
         sentence, sentiment = self.sentences[index]
         label = self.sentiment_to_label[sentiment]
-        divided_video = _divide_video_to_frames(
+        divided_video = divide_video_to_frames(
             self.video_paths.joinpath(self.files[index])
         )
         try:
             divided_video = divided_video.transpose((0, 3, 1, 2))
-        except:
+        except OSError:
             return self.__getitem__(index - 1)
         return (
             torch.tensor(divided_video).to(Config.device).float(),

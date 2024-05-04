@@ -1,11 +1,9 @@
-from pathlib import Path
-
 import xgboost as xgb
 from sklearn.metrics import accuracy_score
 from torch.utils.data import DataLoader
 
-from .AudioDataset import AudioDataset
 from Config import Config
+from .AudioDataset import AudioDataset
 
 
 def train_and_evaluate_xgboost():
@@ -43,7 +41,7 @@ def train_and_evaluate_xgboost():
     test_preds = bst.predict(dtest)
     test_accuracy = accuracy_score(test_labels, test_preds)
     print(f"Test Accuracy: {test_accuracy:.4f}")
-
+    bst.save_model(Config.models_path.joinpath("bst.json"))
     return bst
 
 
