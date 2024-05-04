@@ -2,9 +2,7 @@ from copy import deepcopy
 from itertools import count
 from math import ceil
 
-import numpy as np
 import torch
-from sklearn.metrics import accuracy_score
 from torch import nn
 from torch.optim import AdamW
 from torch.utils.data import DataLoader

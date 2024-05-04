@@ -1,3 +1,4 @@
+from itertools import islice
 from typing import Callable, NamedTuple
 
 import numpy as np
@@ -27,7 +28,7 @@ def _eval_model(
     predictions = []
     all_labels = []
     for input_ids, attention_mask, audio_features, labels in tqdm(
-        eval_loader,
+        islice(eval_loader, Config.val_video_length),
         total=total,
         desc="Evaluating...",
     ):
