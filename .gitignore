@@ -1,5 +1,6 @@
 /executor.py
 /sandbox.py
 /venv/
+/.venv/
 /datasets
 /__pycache__/
