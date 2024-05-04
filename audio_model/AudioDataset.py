@@ -14,7 +14,12 @@ from .audio_preparation import (
 def _repeat_counter(length: int) -> Generator[int, None, None]:
     while True:
         yield from iter(
-            tqdm(range(length), desc="Extracting audio features...", total=length)
+            tqdm(
+                range(length),
+                desc="Extracting audio features...",
+                total=length,
+                leave=False,
+            )
         )
 
 

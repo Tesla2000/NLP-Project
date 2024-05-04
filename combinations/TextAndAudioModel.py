@@ -31,14 +31,8 @@ class TextAndAudioModel(nn.Module):
         texts_features = text_model.bert(
             input_ids, attention_mask=attention_mask
         ).pooler_output
-        outputs = []
-        for audio_features, text_features in zip(audios_features, texts_features):
-            print(audio_features.shape, text_features.shape)
-            sample = torch.concatenate(
-                (audio_features.unsqueeze(0), text_features.unsqueeze(0)), dim=1
-            )
-            sample = self.hidden(sample)
-            sample = self.fc(sample)
-            sample = self.softmax(sample)
-            outputs.append(sample)
-        return torch.concat(outputs)
+        sample = torch.concatenate((audios_features, texts_features), dim=1)
+        sample = self.hidden(sample)
+        sample = self.fc(sample)
+        sample = self.softmax(sample)
+        return sample
