@@ -33,6 +33,7 @@ class TextAndAudioModel(nn.Module):
         ).pooler_output
         outputs = []
         for audio_features, text_features in zip(audios_features, texts_features):
+            print(audios_features.shape, text_features.shape)
             sample = torch.concatenate(
                 (audio_features, text_features.unsqueeze(0)), dim=1
             )
