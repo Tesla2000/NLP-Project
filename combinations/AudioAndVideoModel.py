@@ -1,52 +1,48 @@
 import torch
 from torch import nn
 from torchvision.models import EfficientNet
-from transformers import BertForSequenceClassification
 
 from Config import Config
 
 
-class TextAndVideoModel(nn.Module):
-    n_text_features = 768
+class AudioAndVideoModel(nn.Module):
+    n_audio_features = 65
 
     def __init__(
         self,
         image_model: EfficientNet,
-        text_model: BertForSequenceClassification,
         n_classes: int,
         hidden_size: int = Config.gru_hidden_size,
+        combine_hidden_layer_size: int = Config.combined_hidden_size,
     ):
         super().__init__()
         self.image_model = image_model
-        self.text_model = text_model
         self.hidden_size = hidden_size
         self.rnn = nn.GRU(
             input_size=self.image_model.features[-1].out_channels,
             hidden_size=hidden_size,
         )
+        self.hidden = nn.Linear(
+            in_features=self.n_audio_features + hidden_size,
+            out_features=combine_hidden_layer_size,
+        )
         self.fc = nn.Linear(
-            in_features=hidden_size + self.n_text_features, out_features=n_classes
+            in_features=combine_hidden_layer_size, out_features=n_classes
         )
         self.softmax = nn.Softmax(dim=1)
 
-    def forward(
-        self,
-        input_ids,
-        attention_mask,
-        frames,
-    ):
-        text_model = self.text_model
-        texts_features = text_model.bert(
-            input_ids, attention_mask=attention_mask
-        ).pooler_output
+    def forward(self, audios_features, frames):
         outputs = []
-        for sample, text_features in zip(frames, texts_features):
+        for sample, audio_features in zip(frames, audios_features):
             sample = self.image_model.features(sample)
             sample = nn.functional.adaptive_avg_pool2d(sample, (1, 1))
             sample = sample.squeeze(-1).squeeze(-1)
             _, sample = self.rnn(sample)
-            sample = torch.concatenate((sample, text_features.unsqueeze(0)), dim=1)
-            sample = self.fc(sample)
-            sample = self.softmax(sample)
+            sample = torch.concatenate(
+                (sample.unsqueeze(0), audio_features.unsqueeze(0)), dim=1
+            )
             outputs.append(sample)
-        return torch.concat(outputs)
+        sample = torch.concat(outputs)
+        sample = self.hidden(sample)
+        sample = self.fc(sample)
+        return self.softmax(sample)

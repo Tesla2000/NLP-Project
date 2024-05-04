@@ -27,15 +27,14 @@ def _eval_model(
     new_loss = 0
     predictions = []
     all_labels = []
-    for input_ids, attention_mask, audio_features, labels in tqdm(
+    for *feature_groups, labels in tqdm(
         islice(eval_loader, Config.val_video_length),
         total=total,
         desc="Evaluating...",
     ):
-        input_ids = input_ids.to(Config.device)
-        attention_mask = attention_mask.to(Config.device)
+        feature_groups = tuple(group.to(Config.device) for group in feature_groups)
         labels = labels.to(Config.device)
-        logits = model(audio_features, input_ids, attention_mask=attention_mask)
+        logits = model(*feature_groups)
         new_loss = loss_function(logits, labels).item()
         predictions.append(logits.detach().cpu().numpy())
         all_labels.append(labels.to("cpu").numpy())

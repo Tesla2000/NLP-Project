@@ -26,7 +26,7 @@ class TextAndAudioModel(nn.Module):
         )
         self.softmax = nn.Softmax(dim=1)
 
-    def forward(self, audios_features, input_ids, attention_mask):
+    def forward(self, input_ids, attention_mask, audios_features):
         text_model = self.text_model
         texts_features = text_model.bert(
             input_ids, attention_mask=attention_mask
