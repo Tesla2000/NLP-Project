@@ -2,7 +2,7 @@ import xgboost as xgb
 from sklearn.metrics import accuracy_score
 from torch.utils.data import DataLoader
 
-from AudioDataset import AudioDataset
+from .AudioDataset import AudioDataset
 from Config import Config
 
 

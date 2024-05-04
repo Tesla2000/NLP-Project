@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from combinations.LabelsDataset import LabelsDataset
-from audio_model._audio_preparation import (
+from ._audio_preparation import (
     _extract_audio_from_video,
     _extract_audio_features,
 )
