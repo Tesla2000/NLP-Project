@@ -8,7 +8,7 @@ from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from torchvision.models import efficientnet_b0
 from tqdm import tqdm
-from transformers import BertTokenizer
+from transformers import BertTokenizer, BertForSequenceClassification
 
 from Config import Config
 from combinations.AudioAndTextAndVideoDataset import AudioAndTextAndVideoDataset
@@ -25,8 +25,14 @@ def train_audio_and_text_and_video():
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     eval_dataset = dataset_type(tokenizer, Config.val_path, Config.val_video_path)
     eval_loader = DataLoader(eval_dataset, batch_size=batch_size)
+    bert_model = BertForSequenceClassification.from_pretrained(
+        "bert-base-uncased",
+        num_labels=Config.n_classes,
+        output_attentions=False,
+        output_hidden_states=False,
+    )
     model = AudioAndTextAndVideoModel(
-        image_model=efficientnet_b0(), n_classes=Config.n_classes
+        image_model=efficientnet_b0(), n_classes=Config.n_classes, text_model=bert_model
     )
     model.to(Config.device)
     optimizer = AdamW(

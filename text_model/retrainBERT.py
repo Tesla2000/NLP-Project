@@ -24,7 +24,7 @@ def retrainBERT():
     eval_loader = DataLoader(eval_dataset, batch_size=len(eval_dataset))
     model = BertForSequenceClassification.from_pretrained(
         "bert-base-uncased",
-        num_labels=3,
+        num_labels=Config.n_classes,
         output_attentions=False,
         output_hidden_states=False,
     )
