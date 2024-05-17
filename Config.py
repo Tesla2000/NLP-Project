@@ -38,7 +38,8 @@ class Config:
     torch.cuda.manual_seed_all(seed_val)
 
 
-for field_name in dir(Config):
-    field = getattr(Config, field_name)
-    if isinstance(field, Path) and not field.is_file():
-        field.mkdir(parents=True, exist_ok=True)
+if Config.datasets_path.exists():
+    for field_name in dir(Config):
+        field = getattr(Config, field_name)
+        if isinstance(field, Path) and not field.is_file():
+            field.mkdir(parents=True, exist_ok=True)
