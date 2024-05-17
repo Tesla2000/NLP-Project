@@ -79,7 +79,8 @@ def train_video():
             best_model = deepcopy(model.state_dict())
             consecutive_lack_of_improvement = 0
         torch.save(
-            best_model, Config.video_batch_size.joinpath(f"video_{best_accuracy}.pth")
+            best_model,
+            Config.temp_output_video_folder.joinpath(f"video_{best_accuracy}.pth"),
         )
 
 
