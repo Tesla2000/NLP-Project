@@ -7,6 +7,7 @@ from torch.utils.data import Dataset
 
 class LabelsDataset(Dataset):
     def __init__(self, data_file_path: Path, undersample: bool = True):
+        random.seed(42)
         self.data_file_path = data_file_path
         df = pd.read_csv(data_file_path)
         sentiment_groups = df.groupby("Sentiment")

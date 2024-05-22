@@ -2,8 +2,8 @@ from pathlib import Path
 from typing import Tuple, Dict
 
 import numpy as np
-from moviepy.editor import VideoFileClip
 import opensmile
+from moviepy.editor import VideoFileClip
 
 
 def extract_audio_from_video(video_path: Path) -> Tuple[np.ndarray, int]:
