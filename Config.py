@@ -18,13 +18,14 @@ class Config:
     text_batch_size = 16
     video_batch_size = 1
     audio_batch_size = 16
-    datasets_path = Path("/kaggle/input/meld-dataset/MELD-RAW/MELD.Raw")
+    datasets_path = Path("datasets")
     train_video_path = datasets_path / "train/train_splits"
     val_video_path = datasets_path / "dev/dev_splits_complete"
     test_video_path = datasets_path / "test/output_repeated_splits_test"
     train_path = datasets_path / "train/train_sent_emo.csv"
     val_path = datasets_path / "dev_sent_emo.csv"
     test_path = datasets_path / "test_sent_emo.csv"
+    feature_path = datasets_path / "features"
     root = Path(".")
     temp_output_video_folder = root / "_temp_output_video_folder"
     models_path = root / "models"
@@ -38,8 +39,8 @@ class Config:
     torch.cuda.manual_seed_all(seed_val)
 
 
-if Config.datasets_path.exists():
-    for field_name in dir(Config):
-        field = getattr(Config, field_name)
-        if isinstance(field, Path) and not field.is_file():
-            field.mkdir(parents=True, exist_ok=True)
+# if Config.datasets_path.exists():
+#     for field_name in dir(Config):
+#         field = getattr(Config, field_name)
+#         if isinstance(field, Path) and not field.is_file():
+#             field.mkdir(parents=True, exist_ok=True)

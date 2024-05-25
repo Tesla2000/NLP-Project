@@ -7,10 +7,6 @@ from transformers.utils import PaddingStrategy
 
 from Config import Config
 from audio_model.AudioDataset import AudioDataset
-from audio_model.audio_preparation import (
-    extract_audio_from_video,
-    extract_audio_features,
-)
 from text_model.TextSentimentDataset import TextSentimentDataset
 
 
@@ -26,13 +22,6 @@ class TextAndAudioDataset(TextSentimentDataset, AudioDataset):
 
     def __getitem__(self, index: int):
         sentence, sentiment = self.sentences[index]
-        try:
-            audio_array, sampling_rate = extract_audio_from_video(
-                self.video_paths.joinpath(self.files[index])
-            )
-            extracted_features = extract_audio_features(audio_array, sampling_rate)
-        except OSError:
-            return self.__getitem__(index - 1)
 
         tokenized_sentence = self.tokenizer.encode_plus(
             sentence,
@@ -46,6 +35,6 @@ class TextAndAudioDataset(TextSentimentDataset, AudioDataset):
         return (
             tokenized_sentence["input_ids"].squeeze(0),
             tokenized_sentence["attention_mask"].squeeze(0),
-            Tensor(np.array(tuple(extracted_features.values()))).to(Config.device),
+            AudioDataset.__getitem__(self, index)[0],
             Tensor(np.eye(len(self.sentiment_to_label))[label]),
         )

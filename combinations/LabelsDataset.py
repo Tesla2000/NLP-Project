@@ -41,9 +41,3 @@ class LabelsDataset(Dataset):
 
     def __len__(self):
         return len(self.sentences)
-
-
-if __name__ == "__main__":
-    LabelsDataset(
-        Path("/home/tesla/Filip Studia/master/NLP/NLP-Project/datasets/train.csv")
-    )
