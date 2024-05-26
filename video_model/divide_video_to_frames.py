@@ -141,4 +141,4 @@ def divide_video_to_frames(
 
 
 if __name__ == "__main__":
-    divide_video_to_frames(Config.datasets_path.joinpath("2024-03-21 16-50-53.mkv"))
+    divide_video_to_frames(Config.meld_dataset_path.joinpath("2024-03-21 16-50-53.mkv"))

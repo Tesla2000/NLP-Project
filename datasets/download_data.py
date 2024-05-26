@@ -8,7 +8,7 @@ def download_data():
     for dataset_name, dataset_link in Config.datasets.items():
         download(
             dataset_link,
-            Config.datasets_path.joinpath(
+            Config.meld_dataset_path.joinpath(
                 f"{dataset_name}{re.findall(r'[^/][^.]*([^$]*)', dataset_link)[-1]}"
             ),
         )

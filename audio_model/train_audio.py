@@ -7,9 +7,9 @@ from .AudioDataset import AudioDataset
 
 
 def train_and_evaluate_xgboost():
-    train_dataset = AudioDataset(Config.train_video_path, Config.train_path)
-    val_dataset = AudioDataset(Config.val_video_path, Config.val_path)
-    test_dataset = AudioDataset(Config.test_video_path, Config.test_path)
+    train_dataset = AudioDataset(Config.train_features_path, Config.train_path)
+    val_dataset = AudioDataset(Config.val_features_path, Config.val_path)
+    test_dataset = AudioDataset(Config.test_features_path, Config.test_path)
     train_loader = DataLoader(
         train_dataset, batch_size=len(train_dataset), shuffle=False
     )
