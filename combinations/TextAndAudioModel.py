@@ -32,7 +32,7 @@ class TextAndAudioModel(nn.Module):
             input_ids, attention_mask=attention_mask
         ).pooler_output
         sample = torch.concatenate((audios_features, texts_features), dim=1)
-        sample = self.hidden(sample)
+        sample = self.hidden(sample.float())
         sample = self.fc(sample)
         sample = self.softmax(sample)
         return sample

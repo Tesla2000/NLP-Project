@@ -58,7 +58,7 @@ def train_text_and_audio():
             attention_mask = attention_mask.to(Config.device)
             labels = labels.to(Config.device)
             optimizer.zero_grad()
-            logits = model(audio_features, input_ids, attention_mask=attention_mask)
+            logits = model(input_ids, attention_mask, audio_features)
             train_loss = loss_function(logits, labels)
             train_loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
