@@ -63,7 +63,9 @@ def train_text_and_audio():
             train_loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
-        new_loss, accuracy = _eval_model(eval_loader, model, loss_function, total)
+        new_loss, accuracy = _eval_model(
+            eval_loader, model, loss_function, ceil(len(eval_dataset) / batch_size)
+        )
         if best_loss <= new_loss:
             consecutive_lack_of_improvement += 1
             if (
