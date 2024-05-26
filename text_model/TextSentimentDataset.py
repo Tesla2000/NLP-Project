@@ -10,8 +10,13 @@ from combinations.LabelsDataset import LabelsDataset
 
 
 class TextSentimentDataset(LabelsDataset):
-    def __init__(self, tokenizer: PreTrainedTokenizerBase, data_file_path: Path):
-        LabelsDataset.__init__(self, data_file_path)
+    def __init__(
+        self,
+        tokenizer: PreTrainedTokenizerBase,
+        data_file_path: Path,
+        undersample: bool = True,
+    ):
+        LabelsDataset.__init__(self, data_file_path, undersample)
         self.tokenizer = tokenizer
 
     def __getitem__(self, index: int):

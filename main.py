@@ -1,4 +1,4 @@
-from audio_model.train_audio import train_and_evaluate_xgboost
+from combinations.train_text_and_audio import train_text_and_audio
 
 if __name__ == "__main__":
-    train_and_evaluate_xgboost()
+    train_text_and_audio()

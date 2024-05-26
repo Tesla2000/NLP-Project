@@ -18,12 +18,12 @@ from combinations._eval_model import _eval_model
 def train_text_and_audio():
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
     train_dataset = TextAndAudioDataset(
-        tokenizer, Config.train_path, Config.train_video_path
+        tokenizer, Config.train_path, Config.train_features_path
     )
     batch_size = min(Config.text_batch_size, Config.audio_batch_size)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     eval_dataset = TextAndAudioDataset(
-        tokenizer, Config.val_path, Config.val_video_path
+        tokenizer, Config.val_path, Config.val_features_path
     )
     eval_loader = DataLoader(eval_dataset, batch_size=batch_size)
     bert_model = BertForSequenceClassification.from_pretrained(

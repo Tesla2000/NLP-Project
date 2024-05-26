@@ -15,10 +15,11 @@ class TextAndAudioDataset(TextSentimentDataset, AudioDataset):
         self,
         tokenizer: PreTrainedTokenizerBase,
         data_file_path: Path,
-        video_paths: Path,
+        feature_path: Path,
+        undersample: bool = True,
     ):
-        super().__init__(tokenizer, data_file_path)
-        self.video_paths = video_paths
+        TextSentimentDataset.__init__(self, tokenizer, data_file_path)
+        AudioDataset.__init__(self, feature_path, data_file_path, undersample)
 
     def __getitem__(self, index: int):
         sentence, sentiment = self.sentences[index]
