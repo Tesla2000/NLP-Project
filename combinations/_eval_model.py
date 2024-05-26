@@ -28,7 +28,7 @@ def _eval_model(
     predictions = []
     all_labels = []
     for *feature_groups, labels in tqdm(
-        islice(eval_loader, Config.val_video_length),
+        eval_loader,
         total=total,
         desc="Evaluating...",
     ):
