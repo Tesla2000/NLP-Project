@@ -31,7 +31,9 @@ class TextAndAudioModel(nn.Module):
         texts_features = text_model.bert(
             input_ids, attention_mask=attention_mask
         ).pooler_output
-        sample = torch.concatenate((audios_features, texts_features), dim=1)
+        sample = torch.concatenate(
+            (audios_features.to(Config.device), texts_features), dim=1
+        )
         sample = self.hidden(sample.float())
         sample = self.fc(sample)
         sample = self.softmax(sample)
