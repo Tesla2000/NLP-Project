@@ -1,6 +1,6 @@
 import re
 
-from Config import Config
+from src.Config import Config
 from download import download
 
 
