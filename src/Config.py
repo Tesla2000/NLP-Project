@@ -18,8 +18,8 @@ class Config:
     text_batch_size = 16
     video_batch_size = 1
     audio_batch_size = 16
-    meld_dataset_path = Path("../datasets/meld")
-    features_datasets_path = Path("../datasets/features")
+    meld_dataset_path = Path("/kaggle/input/meld-dataset/MELD-RAW/MELD.Raw")
+    features_datasets_path = Path("/kaggle/input/features-dataset/features")
     train_video_path = meld_dataset_path / "train/train_splits"
     val_video_path = meld_dataset_path / "dev/dev_splits_complete"
     test_video_path = meld_dataset_path / "test/output_repeated_splits_test"
