@@ -11,7 +11,7 @@ class Config:
     n_classes = 3
     gru_hidden_size = 1024
     eps = 1e-8
-    learning_rate = 2e-3
+    learning_rate = 2e-6
     consecutive_lacks_of_improvement_allowed = 3
 
     max_length = 64
