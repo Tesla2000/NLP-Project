@@ -6,8 +6,8 @@ from torch import nn, optim
 from tqdm import tqdm
 
 from ..Config import Config
-from AudioSpectrogramDataset import AudioSpectrogramDataset
-from AudioSpectrogramModel import AudioSpectrogramModel
+from .AudioSpectrogramDataset import AudioSpectrogramDataset
+from .AudioSpectrogramModel import AudioSpectrogramModel
 
 
 def train(model, loader, criterion, optimizer):
