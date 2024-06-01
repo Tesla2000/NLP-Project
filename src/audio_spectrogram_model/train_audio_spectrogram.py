@@ -99,6 +99,7 @@ def train_audio_spectrogram():
         if no_improvement_iterations > Config.consecutive_lacks_of_improvement_allowed:
             break
 
+    model.load_state_dict(best_state)
     accuracy = test(model, test_loader)
     torch.save(
         best_state,
