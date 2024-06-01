@@ -87,7 +87,7 @@ def _get_bert_model():
             output_hidden_states=False,
         )
         model.to(Config.device)
-        model.load_state_dict(weights_path)
+        model.load_state_dict(torch.load(weights_path))
     except StopIteration:
         model = retrainBERT()
     return model
