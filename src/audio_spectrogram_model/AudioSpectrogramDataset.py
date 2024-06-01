@@ -15,7 +15,9 @@ class AudioSpectrogramDataset(LabelsDataset):
         label = self.sentiment_to_label[sentiment]
         try:
             spectrogram_path = self.spectrograms_path.joinpath(self.files[index])
-            spectrogram = pd.read_parquet(spectrogram_path).to_numpy()
+            spectrogram = pd.read_parquet(
+                spectrogram_path.with_suffix(".parquet")
+            ).to_numpy()
         except OSError as e:
             print(e)
             return self.__getitem__(index - 1)
