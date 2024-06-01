@@ -29,30 +29,36 @@ def train(model, loader, criterion, optimizer):
 def validate(model, loader, criterion):
     model.eval()
     running_loss = 0.0
-    with torch.no_grad():
-        for inputs, labels in tqdm(loader):
-            inputs, labels = inputs.to(Config.device), labels.to(Config.device)
-
+    correct = 0
+    total = 0
+    for inputs, labels in tqdm(loader):
+        inputs, labels = inputs.to(Config.device), labels.to(Config.device)
+        with torch.no_grad():
             outputs = model(inputs)
-            loss = criterion(outputs, labels)
+        loss = criterion(outputs, labels)
 
-            running_loss += loss.item()
-    return running_loss / len(loader)
+        running_loss += loss.item()
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+    accuracy = 100 * correct / total
+    return accuracy, running_loss / len(loader)
 
 
 def test(model, loader):
     model.eval()
     correct = 0
     total = 0
-    with torch.no_grad():
-        for inputs, labels in tqdm(loader):
-            inputs, labels = inputs.to(Config.device), labels.to(Config.device)
+    for inputs, labels in tqdm(loader):
+        inputs, labels = inputs.to(Config.device), labels.to(Config.device)
+        with torch.no_grad():
             outputs = model(inputs)
-            _, predicted = torch.max(outputs.data, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
     accuracy = 100 * correct / total
     print(f"Testing Accuracy: {accuracy:.2f}%")
+    return accuracy
 
 
 def train_audio_spectrogram():
@@ -74,10 +80,25 @@ def train_audio_spectrogram():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
+    best_val_lost = float("inf")
+    no_improvement_iterations = 0
     for epoch in count(1):
         print(f"Epoch {epoch}")
         train_loss = train(model, train_loader, criterion, optimizer)
-        val_loss = validate(model, val_loader, criterion)
-        print(f"Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}")
+        accuracy, val_loss = validate(model, val_loader, criterion)
+        print(
+            f"Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}, Validation Accuracy: {accuracy:.4f}"
+        )
+        if val_loss < best_val_lost:
+            best_val_lost = val_loss
+            no_improvement_iterations = 0
+        else:
+            no_improvement_iterations += 1
+        if no_improvement_iterations > Config.consecutive_lacks_of_improvement_allowed:
+            break
 
-    test(model, test_loader)
+    accuracy = test(model, test_loader)
+    torch.save(
+        model.state_dict(),
+        Config.models_path.joinpath(f"audio_spectrogram_{accuracy:.4f}.pth"),
+    )
