@@ -7,20 +7,22 @@ from torch import nn, optim
 from tqdm import tqdm
 
 from ..Config import Config
-from .AudioSpectrogramDataset import AudioSpectrogramDataset
-from .AudioSpectrogramModel import AudioSpectrogramModel
+from .TextAudioSpectrogramDataset import TextAudioSpectrogramDataset
+from .TextAudioSpectrogramModel import TextAudioSpectrogramModel
 
 
 def train(model, loader, criterion, optimizer):
     model.train()
     running_loss = 0.0
-    for inputs, labels in tqdm(loader):
-        inputs, labels = inputs.to(Config.device), labels.to(Config.device)
+    for spectrograms, text_features, labels in tqdm(loader):
+        spectrograms, text_features, labels = (
+            spectrograms.to(Config.device),
+            text_features.to(Config.device),
+            labels.to(Config.device),
+        )
 
         optimizer.zero_grad()
-        outputs = model(inputs)
-        print(outputs)
-        break
+        outputs = model(spectrograms, text_features)
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
@@ -34,10 +36,14 @@ def validate(model, loader, criterion):
     running_loss = 0.0
     correct = 0
     total = 0
-    for inputs, labels in tqdm(loader):
-        inputs, labels = inputs.to(Config.device), labels.to(Config.device)
+    for spectrograms, text_features, labels in tqdm(loader):
+        spectrograms, text_features, labels = (
+            spectrograms.to(Config.device),
+            text_features.to(Config.device),
+            labels.to(Config.device),
+        )
         with torch.no_grad():
-            outputs = model(inputs)
+            outputs = model(spectrograms, text_features)
         loss = criterion(outputs, labels)
 
         running_loss += loss.item()
@@ -52,10 +58,14 @@ def test(model, loader):
     model.eval()
     correct = 0
     total = 0
-    for inputs, labels in tqdm(loader):
-        inputs, labels = inputs.to(Config.device), labels.to(Config.device)
+    for spectrograms, text_features, labels in tqdm(loader):
+        spectrograms, text_features, labels = (
+            spectrograms.to(Config.device),
+            text_features.to(Config.device),
+            labels.to(Config.device),
+        )
         with torch.no_grad():
-            outputs = model(inputs)
+            outputs = model(spectrograms, text_features)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
@@ -66,14 +76,16 @@ def test(model, loader):
 
 def train_audio_spectrogram():
     num_classes = Config.n_classes
-    model = AudioSpectrogramModel(num_classes=num_classes).to(Config.device)
+    model = TextAudioSpectrogramModel(num_classes=num_classes).to(Config.device)
 
-    train_dataset = AudioSpectrogramDataset(
-        Config.train_spectograms_path, Config.train_path
+    train_dataset = TextAudioSpectrogramDataset(
+        Config.train_spectograms_path, Config.train_path, Config.train_text_features
     )
-    val_dataset = AudioSpectrogramDataset(Config.val_spectograms_path, Config.val_path)
-    test_dataset = AudioSpectrogramDataset(
-        Config.test_spectograms_path, Config.test_path
+    val_dataset = TextAudioSpectrogramDataset(
+        Config.val_spectograms_path, Config.val_path, Config.val_text_features
+    )
+    test_dataset = TextAudioSpectrogramDataset(
+        Config.test_spectograms_path, Config.test_path, Config.test_text_features
     )
 
     train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)

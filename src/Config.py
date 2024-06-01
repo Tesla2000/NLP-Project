@@ -19,7 +19,8 @@ class Config:
     video_batch_size = 1
     audio_batch_size = 16
     meld_dataset_path = Path("/kaggle/input/meld-dataset/MELD-RAW/MELD.Raw")
-    features_datasets_path = Path("/kaggle/input/features-dataset/features")
+    features_dataset_path = Path("/kaggle/input/features-dataset")
+    features_datasets_path = features_dataset_path / "features"
     train_video_path = meld_dataset_path / "train/train_splits"
     val_video_path = meld_dataset_path / "dev/dev_splits_complete"
     test_video_path = meld_dataset_path / "test/output_repeated_splits_test"
@@ -29,6 +30,9 @@ class Config:
     train_features_path = features_datasets_path / "train_features_undersampled.parquet"
     val_features_path = features_datasets_path / "val_features_undersampled.parquet"
     test_features_path = features_datasets_path / "test_features_undersampled.parquet"
+    train_text_features = features_datasets_path / "train_text_features.parquet"
+    val_text_features = features_datasets_path / "val_text_features.parquet"
+    test_text_features = features_datasets_path / "test_text_features.parquet"
     root = Path("/kaggle/working")
     temp_output_video_folder = root / "_temp_output_video_folder"
     models_path = root / "models"
