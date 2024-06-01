@@ -32,6 +32,9 @@ class Config:
     root = Path(".")
     temp_output_video_folder = root / "_temp_output_video_folder"
     models_path = root / "models"
+    test_spectograms_path = root / "test_spectrograms"
+    val_spectograms_path = root / "val_spectrograms"
+    train_spectograms_path = root / "spectrograms"
     models_path.mkdir(exist_ok=True, parents=True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
