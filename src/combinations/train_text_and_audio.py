@@ -7,7 +7,7 @@ from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from transformers import BertTokenizer
+from transformers import BertTokenizer, BertForSequenceClassification
 
 from ..Config import Config
 from ..combinations.TextAndAudioDataset import TextAndAudioDataset
@@ -18,7 +18,7 @@ from ..text_model.retrainBERT import retrainBERT
 
 def train_text_and_audio():
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
-    bert_model = retrainBERT()
+    bert_model = _get_bert_model()
     train_dataset = TextAndAudioDataset(
         tokenizer, Config.train_path, Config.train_features_path
     )
@@ -75,6 +75,22 @@ def train_text_and_audio():
             best_model = deepcopy(model.state_dict())
             consecutive_lack_of_improvement = 0
     torch.save(best_model, Config.models_path.joinpath(f"{best_accuracy}.pth"))
+
+
+def _get_bert_model():
+    try:
+        weights_path = next(Config.models_path.glob("*.pth"))
+        model = BertForSequenceClassification.from_pretrained(
+            "bert-base-uncased",
+            num_labels=Config.n_classes,
+            output_attentions=False,
+            output_hidden_states=False,
+        )
+        model.to(Config.device)
+        model.load_state_dict(weights_path)
+    except StopIteration:
+        model = retrainBERT()
+    return model
 
 
 if __name__ == "__main__":

@@ -84,7 +84,8 @@ def retrainBERT():
                 best_model = deepcopy(model.state_dict())
                 consecutive_lack_of_improvement = 0
     torch.save(best_model, Config.models_path.joinpath(f"{best_accuracy}.pth"))
-    return best_model
+    model.load_state_dict(best_model)
+    return model
 
 
 if __name__ == "__main__":
