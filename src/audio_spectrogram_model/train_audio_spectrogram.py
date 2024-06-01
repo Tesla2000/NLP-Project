@@ -1,3 +1,4 @@
+from copy import deepcopy
 from itertools import count
 
 import torch
@@ -91,6 +92,7 @@ def train_audio_spectrogram():
         )
         if val_loss < best_val_lost:
             best_val_lost = val_loss
+            best_state = deepcopy(model.state_dict())
             no_improvement_iterations = 0
         else:
             no_improvement_iterations += 1
@@ -99,6 +101,6 @@ def train_audio_spectrogram():
 
     accuracy = test(model, test_loader)
     torch.save(
-        model.state_dict(),
+        best_state,
         Config.models_path.joinpath(f"audio_spectrogram_{accuracy:.4f}.pth"),
     )
