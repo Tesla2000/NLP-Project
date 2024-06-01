@@ -22,9 +22,7 @@ class TextAudioSpectrogramDataset(LabelsDataset):
             spectrogram = np.array(
                 [pd.read_parquet(spectrogram_path.with_suffix(".parquet")).to_numpy()]
             )
-
         except OSError as e:
-            print(e)
             return self.__getitem__(index - 1)
 
         return spectrogram, self.text_features[index], label
