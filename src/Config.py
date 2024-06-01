@@ -29,7 +29,7 @@ class Config:
     train_features_path = features_datasets_path / "train_features_undersampled.parquet"
     val_features_path = features_datasets_path / "val_features_undersampled.parquet"
     test_features_path = features_datasets_path / "test_features_undersampled.parquet"
-    root = Path(".")
+    root = Path("/kaggle/working")
     temp_output_video_folder = root / "_temp_output_video_folder"
     models_path = root / "models"
     test_spectograms_path = root / "test_spectrograms"
