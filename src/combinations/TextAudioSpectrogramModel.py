@@ -20,9 +20,9 @@ class TextAudioSpectrogramModel(nn.Module):
     def forward(
         self, spectrogram: torch.Tensor, text_features: torch.Tensor
     ) -> torch.Tensor:
+        print(tuple(self.resnet._modules.items())[:-1])
         for module in tuple(self.resnet._modules.values())[:-1]:
-            breakpoint()
             spectrogram = module(spectrogram)
-        breakpoint()
+            print(spectrogram.shape)
         features = torch.concat((spectrogram, text_features))
         return self.softmax(self.fc(features))
