@@ -30,9 +30,9 @@ class Config:
     train_features_path = features_datasets_path / "train_features_undersampled.parquet"
     val_features_path = features_datasets_path / "val_features_undersampled.parquet"
     test_features_path = features_datasets_path / "test_features_undersampled.parquet"
-    train_text_features = features_datasets_path / "train_text_features.parquet"
-    val_text_features = features_datasets_path / "val_text_features.parquet"
-    test_text_features = features_datasets_path / "test_text_features.parquet"
+    train_text_features = features_dataset_path / "train_text_features.parquet"
+    val_text_features = features_dataset_path / "val_text_features.parquet"
+    test_text_features = features_dataset_path / "test_text_features.parquet"
     root = Path("/kaggle/working")
     temp_output_video_folder = root / "_temp_output_video_folder"
     models_path = root / "models"

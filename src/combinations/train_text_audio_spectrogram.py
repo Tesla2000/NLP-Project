@@ -74,7 +74,7 @@ def test(model, loader):
     return accuracy
 
 
-def train_audio_spectrogram():
+def train_text_audio_spectrogram():
     num_classes = Config.n_classes
     model = TextAudioSpectrogramModel(num_classes=num_classes).to(Config.device)
 
