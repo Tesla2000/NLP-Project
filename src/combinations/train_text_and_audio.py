@@ -74,12 +74,15 @@ def train_text_and_audio():
             best_accuracy = accuracy
             best_model = deepcopy(model.state_dict())
             consecutive_lack_of_improvement = 0
-    torch.save(best_model, Config.models_path.joinpath(f"{best_accuracy}.pth"))
+    torch.save(
+        best_model,
+        Config.models_path.joinpath(f"text_and_audio{best_accuracy:.4f}.pth"),
+    )
 
 
-def _get_bert_model():
+def _get_bert_model() -> BertForSequenceClassification:
     try:
-        weights_path = next(Config.models_path.glob("*.pth"))
+        weights_path = next(Config.models_path.glob("text_*.pth"))
         model = BertForSequenceClassification.from_pretrained(
             "bert-base-uncased",
             num_labels=Config.n_classes,
