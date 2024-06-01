@@ -25,6 +25,8 @@ class TextAndAudioModel(nn.Module):
             in_features=combine_hidden_layer_size, out_features=n_classes
         )
         self.softmax = nn.Softmax(dim=1)
+        for param in self.text_model.bert.parameters():
+            param.requires_grad = False
 
     def forward(self, input_ids, attention_mask, audios_features):
         text_model = self.text_model
