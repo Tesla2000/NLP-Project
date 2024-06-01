@@ -15,6 +15,7 @@ class AudioSpectrogramModel(nn.Module):
 
         num_ftrs = self.resnet.fc.in_features
         self.resnet.fc = nn.Linear(num_ftrs, num_classes)
+        self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.resnet(x)
+        return self.softmax(self.resnet(x))

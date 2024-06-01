@@ -20,7 +20,7 @@ def train(model, loader, criterion, optimizer):
         optimizer.zero_grad()
         outputs = model(inputs)
         print(outputs)
-        break
+        raise ValueError
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
