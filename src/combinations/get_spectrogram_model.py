@@ -1,0 +1,20 @@
+import re
+
+import torch
+from torchvision.models import ResNet, resnet18
+
+from ..Config import Config
+from ..audio_spectrogram_model.train_audio_spectrogram import train_audio_spectrogram
+
+
+def get_spectrogram_model() -> ResNet:
+    try:
+        weights_path = max(
+            Config.models_path.glob("audio_spectrogram_*.pth"),
+            key=lambda path: int(re.findall(r"\d+", path.name)[-1]),
+        )
+        model = resnet18()
+        model.load_state_dict(torch.load(weights_path))
+    except StopIteration:
+        model = train_audio_spectrogram()
+    return model
