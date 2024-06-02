@@ -37,8 +37,6 @@ class BertAudioSpectrogramModel(nn.Module):
         spectrogram_output = self.res_net_weight.weight * self.softmax(
             self.fc(spectrogram)
         )
-        print(text_output.shape)
-        print(spectrogram_output.shape)
         return (text_output + spectrogram_output) / (
             1 + self.res_net_weight.weight.item()
         )
