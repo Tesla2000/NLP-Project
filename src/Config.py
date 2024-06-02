@@ -6,7 +6,7 @@ import torch
 
 
 class Config:
-    learning_rate_spectrogram = 1e-6
+    learning_rate_spectrogram = 1e-5
     combined_hidden_size = 128
     val_video_length = 100
     n_classes = 3
