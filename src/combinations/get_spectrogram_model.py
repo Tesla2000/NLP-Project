@@ -13,8 +13,8 @@ def get_spectrogram_model() -> AudioSpectrogramModel:
             Config.models_path.glob("audio_spectrogram_*.pth"),
             key=lambda path: int(re.findall(r"\d+", path.name)[-1]),
         )
-        model = AudioSpectrogramModel(Config.n_classes)
+        model = AudioSpectrogramModel(Config.n_classes).to(Config.device)
         model.load_state_dict(torch.load(weights_path))
-    except StopIteration:
+    except ValueError:
         model = train_audio_spectrogram()
     return model
