@@ -1,8 +1,8 @@
 import torch
 from transformers import BertForSequenceClassification
 
-from src.Config import Config
-from src.text_model.retrainBERT import retrainBERT
+from ..Config import Config
+from ..text_model.retrainBERT import retrainBERT
 
 
 def get_bert_model() -> BertForSequenceClassification:
