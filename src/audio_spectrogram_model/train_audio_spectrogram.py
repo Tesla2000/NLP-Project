@@ -105,3 +105,4 @@ def train_audio_spectrogram():
         best_state,
         Config.models_path.joinpath(f"audio_spectrogram_{accuracy:.4f}.pth"),
     )
+    return model
