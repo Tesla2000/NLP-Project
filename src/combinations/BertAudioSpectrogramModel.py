@@ -30,7 +30,7 @@ class BertAudioSpectrogramModel(nn.Module):
 
     def forward(self, input_ids, attention_mask, spectrogram):
         text_model = self.text_model
-        text_output = text_model(input_ids, attention_mask=attention_mask)
+        text_output = text_model(input_ids, attention_mask=attention_mask)[0]
         for module in tuple(self.resnet._modules.values())[:-1]:
             spectrogram = module(spectrogram)
         spectrogram = torch.flatten(spectrogram, 1)
