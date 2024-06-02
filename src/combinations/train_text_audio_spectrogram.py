@@ -93,7 +93,7 @@ def train_text_audio_spectrogram():
     test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=Config.learning_rate_spectrogram)
 
     best_val_lost = float("inf")
     no_improvement_iterations = 0
