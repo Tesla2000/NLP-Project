@@ -13,16 +13,12 @@ class TextAndAudioModel(nn.Module):
         self,
         text_model: BertForSequenceClassification,
         n_classes: int,
-        combine_hidden_layer_size: int = Config.combined_hidden_size,
     ):
         super().__init__()
         self.text_model = text_model
-        self.hidden = nn.Linear(
-            in_features=self.n_audio_features + self.n_text_features,
-            out_features=combine_hidden_layer_size,
-        )
         self.fc = nn.Linear(
-            in_features=combine_hidden_layer_size, out_features=n_classes
+            in_features=self.n_text_features + self.n_audio_features,
+            out_features=n_classes,
         )
         self.softmax = nn.Softmax(dim=1)
         for param in self.text_model.bert.parameters():
@@ -36,7 +32,6 @@ class TextAndAudioModel(nn.Module):
         sample = torch.concatenate(
             (audios_features.to(Config.device), texts_features), dim=1
         )
-        sample = self.hidden(sample.float())
-        sample = self.fc(sample)
+        sample = self.fc(sample.float())
         sample = self.softmax(sample)
         return sample

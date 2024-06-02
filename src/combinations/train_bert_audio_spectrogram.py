@@ -2,27 +2,29 @@ from copy import deepcopy
 from itertools import count
 
 import torch
-from torch.utils.data import DataLoader
 from torch import nn, optim
+from torch.utils.data import DataLoader
 from tqdm import tqdm
+from transformers import BertTokenizer
 
+from .BertAudioSpectrogramDataset import BertAudioSpectrogramDataset
+from .BertAudioSpectrogramModel import BertAudioSpectrogramModel
+from .get_bert_model import get_bert_model
 from ..Config import Config
-from .TextAudioSpectrogramDataset import TextAudioSpectrogramDataset
-from .TextAudioSpectrogramModel import TextAudioSpectrogramModel
 
 
 def train(model, loader, criterion, optimizer):
     model.train()
     running_loss = 0.0
-    for spectrograms, text_features, labels in tqdm(loader):
-        spectrograms, text_features, labels = (
-            spectrograms.to(Config.device),
-            text_features.to(Config.device),
+    for input_ids, attention_mask, spectrogram, labels in tqdm(loader):
+        input_ids, attention_mask, spectrogram, labels = (
+            input_ids.to(Config.device),
+            attention_mask.to(Config.device),
+            spectrogram.to(Config.device),
             labels.to(Config.device),
         )
-
         optimizer.zero_grad()
-        outputs = model(spectrograms, text_features)
+        outputs = model(input_ids, attention_mask, spectrogram)
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
@@ -36,14 +38,15 @@ def validate(model, loader, criterion):
     running_loss = 0.0
     correct = 0
     total = 0
-    for spectrograms, text_features, labels in tqdm(loader):
-        spectrograms, text_features, labels = (
-            spectrograms.to(Config.device),
-            text_features.to(Config.device),
+    for input_ids, attention_mask, spectrogram, labels in tqdm(loader):
+        input_ids, attention_mask, spectrogram, labels = (
+            input_ids.to(Config.device),
+            attention_mask.to(Config.device),
+            spectrogram.to(Config.device),
             labels.to(Config.device),
         )
         with torch.no_grad():
-            outputs = model(spectrograms, text_features)
+            outputs = model(input_ids, attention_mask, spectrogram)
         loss = criterion(outputs, labels)
 
         running_loss += loss.item()
@@ -58,14 +61,15 @@ def test(model, loader):
     model.eval()
     correct = 0
     total = 0
-    for spectrograms, text_features, labels in tqdm(loader):
-        spectrograms, text_features, labels = (
-            spectrograms.to(Config.device),
-            text_features.to(Config.device),
+    for input_ids, attention_mask, spectrogram, labels in tqdm(loader):
+        input_ids, attention_mask, spectrogram, labels = (
+            input_ids.to(Config.device),
+            attention_mask.to(Config.device),
+            spectrogram.to(Config.device),
             labels.to(Config.device),
         )
         with torch.no_grad():
-            outputs = model(spectrograms, text_features)
+            outputs = model(input_ids, attention_mask, spectrogram)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
@@ -74,18 +78,20 @@ def test(model, loader):
     return accuracy
 
 
-def train_text_audio_spectrogram():
+def train_bert_audio_spectrogram():
+    tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
+    bert_model = get_bert_model()
     num_classes = Config.n_classes
-    model = TextAudioSpectrogramModel(num_classes=num_classes).to(Config.device)
+    model = BertAudioSpectrogramModel(bert_model, num_classes).to(Config.device)
 
-    train_dataset = TextAudioSpectrogramDataset(
-        Config.train_spectograms_path, Config.train_path, Config.train_text_features
+    train_dataset = BertAudioSpectrogramDataset(
+        tokenizer, Config.train_path, Config.train_spectograms_path
     )
-    val_dataset = TextAudioSpectrogramDataset(
-        Config.val_spectograms_path, Config.val_path, Config.val_text_features
+    val_dataset = BertAudioSpectrogramDataset(
+        tokenizer, Config.val_path, Config.val_spectograms_path
     )
-    test_dataset = TextAudioSpectrogramDataset(
-        Config.test_spectograms_path, Config.test_path, Config.test_text_features
+    test_dataset = BertAudioSpectrogramDataset(
+        tokenizer, Config.test_path, Config.test_spectograms_path
     )
 
     train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)

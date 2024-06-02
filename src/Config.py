@@ -13,7 +13,7 @@ class Config:
     gru_hidden_size = 1024
     eps = 1e-8
     learning_rate = 2e-6
-    consecutive_lacks_of_improvement_allowed = 3
+    consecutive_lacks_of_improvement_allowed = 2
 
     max_length = 64
     text_batch_size = 16
